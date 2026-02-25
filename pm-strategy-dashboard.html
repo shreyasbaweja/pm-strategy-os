@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PM Strategy OS — Evaluation & Skills Framework</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0f;
+  --surface: #111118;
+  --surface2: #18181f;
+  --border: #2a2a35;
+  --accent: #e8ff47;
+  --accent2: #ff6b35;
+  --accent3: #47c4ff;
+  --accent4: #c47aff;
+  --text: #f0f0f5;
+  --text2: #8888a0;
+  --text3: #555568;
+  --red: #ff4444;
+  --amber: #ffaa00;
+  --green: #44dd88;
+  --green-dim: #1a3d2b;
+  --amber-dim: #3d2e00;
+  --red-dim: #3d0f0f;
+  --r: 8px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(10,10,15,0.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 0; height: 52px;
+  padding: 0 24px;
+}
+.nav-logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800; font-size: 15px;
+  color: var(--accent);
+  letter-spacing: -0.5px;
+  margin-right: 32px;
+  white-space: nowrap;
+}
+.nav-tabs { display: flex; gap: 2px; flex: 1; }
+.nav-tab {
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--text2);
+  font-size: 11px;
+  font-family: 'DM Mono', monospace;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  transition: all 0.2s;
+  white-space: nowrap;
+  border: none; background: transparent;
+}
+.nav-tab:hover { color: var(--text); background: var(--surface2); }
+.nav-tab.active { color: var(--accent); background: rgba(232,255,71,0.08); }
+
+.nav-right { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+.mode-badge {
+  padding: 4px 12px; border-radius: 20px;
+  font-size: 10px; font-weight: 500; letter-spacing: 1px;
+  background: rgba(232,255,71,0.1);
+  border: 1px solid rgba(232,255,71,0.3);
+  color: var(--accent);
+  cursor: pointer;
+}
+.save-btn {
+  padding: 6px 16px; border-radius: 6px;
+  background: var(--accent); color: #0a0a0f;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; font-weight: 500;
+  border: none; cursor: pointer;
+  transition: opacity 0.2s;
+}
+.save-btn:hover { opacity: 0.85; }
+
+/* ── LAYOUT ── */
+main { margin-top: 52px; }
+.view { display: none; padding: 28px 28px 60px; }
+.view.active { display: block; }
+
+/* ── HERO HEADER ── */
+.page-header {
+  margin-bottom: 28px;
+  display: flex; align-items: flex-end; justify-content: space-between;
+}
+.page-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 28px; font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1.1;
+}
+.page-title span { color: var(--accent); font-family: 'Instrument Serif', serif; font-style: italic; }
+.page-sub { color: var(--text2); font-size: 11px; margin-top: 6px; }
+
+/* ── CARDS & GRIDS ── */
+.grid { display: grid; gap: 16px; }
+.g2 { grid-template-columns: repeat(2, 1fr); }
+.g3 { grid-template-columns: repeat(3, 1fr); }
+.g4 { grid-template-columns: repeat(4, 1fr); }
+.g1-2 { grid-template-columns: 1fr 2fr; }
+.g2-1 { grid-template-columns: 2fr 1fr; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 20px;
+}
+.card-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--text2);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.card-title .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  display: inline-block;
+}
+
+/* ── STAT TILES ── */
+.stat-tile {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 18px;
+}
+.stat-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 36px; font-weight: 800;
+  letter-spacing: -2px;
+  line-height: 1;
+}
+.stat-label { color: var(--text2); font-size: 10px; letter-spacing: 1px; margin-top: 6px; }
+.stat-delta { font-size: 10px; margin-top: 4px; }
+.up { color: var(--green); }
+.down { color: var(--red); }
+
+/* ── SKILL DOMAINS ── */
+.domain-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+}
+.domain-header {
+  padding: 14px 18px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+.domain-name {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700; font-size: 13px;
+}
+.domain-score-bar {
+  display: flex; align-items: center; gap: 10px;
+}
+.bar-track {
+  width: 120px; height: 4px;
+  background: var(--surface2);
+  border-radius: 2px; overflow: hidden;
+}
+.bar-fill {
+  height: 100%; border-radius: 2px;
+  transition: width 0.6s cubic-bezier(.4,0,.2,1);
+}
+.score-chip {
+  font-size: 11px; font-weight: 600;
+  font-family: 'Syne', sans-serif;
+  min-width: 28px; text-align: right;
+}
+.rag-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.domain-body { padding: 0; }
+.skill-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 18px;
+  border-bottom: 1px solid rgba(42,42,53,0.5);
+  transition: background 0.15s;
+}
+.skill-row:last-child { border-bottom: none; }
+.skill-row:hover { background: rgba(255,255,255,0.02); }
+.skill-name { flex: 1; color: var(--text2); font-size: 11px; }
+.skill-name strong { color: var(--text); display: block; font-weight: 500; margin-bottom: 1px; }
+.skill-controls { display: flex; align-items: center; gap: 8px; }
+
+input[type=range] {
+  -webkit-appearance: none;
+  width: 100px; height: 3px;
+  background: var(--surface2);
+  border-radius: 2px; outline: none;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+.score-display {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px; font-weight: 700;
+  min-width: 20px; text-align: center;
+}
+.rag-badge {
+  font-size: 9px; font-weight: 600;
+  padding: 2px 7px; border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+.rag-G { background: var(--green-dim); color: var(--green); }
+.rag-A { background: var(--amber-dim); color: var(--amber); }
+.rag-R { background: var(--red-dim); color: var(--red); }
+.weight-input {
+  width: 44px; padding: 3px 6px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 4px; color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; text-align: center;
+}
+
+/* ── MODE SELECTOR ── */
+.mode-pills { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+.mode-pill {
+  padding: 6px 16px; border-radius: 20px;
+  font-size: 11px; font-weight: 500;
+  border: 1px solid var(--border);
+  background: transparent; color: var(--text2);
+  cursor: pointer; transition: all 0.2s;
+  font-family: 'DM Mono', monospace;
+}
+.mode-pill:hover { border-color: var(--accent); color: var(--accent); }
+.mode-pill.active {
+  background: var(--accent); color: #0a0a0f;
+  border-color: var(--accent);
+}
+
+/* ── FLOW DIAGRAM ── */
+#flow-canvas {
+  width: 100%; height: 600px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  position: relative; overflow: hidden;
+}
+.flow-node {
+  position: absolute;
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 130px;
+  text-align: center;
+  user-select: none;
+}
+.flow-node:hover { border-color: var(--accent); transform: translateY(-2px); }
+.flow-node.center-node {
+  background: rgba(232,255,71,0.08);
+  border-color: var(--accent);
+  min-width: 160px;
+}
+.flow-node .fn-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700; font-size: 12px;
+}
+.flow-node .fn-sub { color: var(--text2); font-size: 9px; margin-top: 3px; }
+.flow-node .fn-score {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800; font-size: 18px;
+  color: var(--accent); margin-top: 6px;
+}
+svg.flow-svg {
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+}
+
+/* ── INITIATIVE MATRIX ── */
+.initiative-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 12px;
+  height: 420px;
+}
+.quadrant {
+  border-radius: var(--r);
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.q-label {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  margin-bottom: 12px; opacity: 0.7;
+}
+.q1 { background: rgba(68,221,136,0.06); border: 1px solid rgba(68,221,136,0.2); }
+.q2 { background: rgba(71,196,255,0.06); border: 1px solid rgba(71,196,255,0.2); }
+.q3 { background: rgba(255,170,0,0.06); border: 1px solid rgba(255,170,0,0.2); }
+.q4 { background: rgba(255,68,68,0.06); border: 1px solid rgba(255,68,68,0.2); }
+
+.initiative-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; margin: 3px;
+  border-radius: 6px;
+  font-size: 10px; font-weight: 500;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  cursor: pointer; transition: all 0.2s;
+}
+.initiative-chip:hover { background: rgba(255,255,255,0.1); }
+
+/* ── CORRELATION MAP ── */
+.corr-table { width: 100%; border-collapse: collapse; }
+.corr-table th {
+  font-size: 9px; letter-spacing: 1px;
+  color: var(--text2); text-transform: uppercase;
+  padding: 8px 10px; text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.corr-table td {
+  padding: 9px 10px;
+  border-bottom: 1px solid rgba(42,42,53,0.5);
+  font-size: 11px;
+}
+.corr-chip {
+  padding: 2px 8px; border-radius: 4px;
+  font-size: 9px; font-weight: 600;
+}
+.corr-strong { background: rgba(68,221,136,0.15); color: var(--green); }
+.corr-moderate { background: rgba(255,170,0,0.15); color: var(--amber); }
+.corr-weak { background: rgba(255,255,255,0.08); color: var(--text2); }
+.corr-inverse { background: rgba(255,68,68,0.15); color: var(--red); }
+
+/* ── TEMPLATE VIEW ── */
+.template-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.template-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.template-card:hover { border-color: var(--accent2); transform: translateY(-3px); }
+.template-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+.template-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+}
+.template-body { padding: 16px; }
+.template-step {
+  display: flex; gap: 10px; margin-bottom: 10px;
+  align-items: flex-start;
+}
+.step-num {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--surface2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 600; color: var(--text2);
+  flex-shrink: 0; margin-top: 1px;
+}
+.step-text { font-size: 10px; color: var(--text2); line-height: 1.5; }
+.step-text strong { color: var(--text); display: block; font-size: 11px; }
+
+/* ── INDUSTRY SELECTOR ── */
+.industry-pills { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+.ind-pill {
+  padding: 5px 12px; border-radius: 20px;
+  font-size: 10px; border: 1px solid var(--border);
+  background: transparent; color: var(--text2);
+  cursor: pointer; transition: all 0.15s;
+  font-family: 'DM Mono', monospace;
+}
+.ind-pill:hover { border-color: var(--accent3); color: var(--accent3); }
+.ind-pill.active { background: var(--accent3); color: #0a0a0f; border-color: var(--accent3); }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--surface); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* ── TOOLTIP ── */
+.tooltip {
+  position: fixed; z-index: 999;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px; padding: 8px 12px;
+  font-size: 11px; max-width: 220px;
+  pointer-events: none; opacity: 0;
+  transition: opacity 0.2s;
+}
+
+/* ── SECTION DIVIDER ── */
+.divider { height: 1px; background: var(--border); margin: 24px 0; }
+.section-label {
+  font-size: 10px; letter-spacing: 2px;
+  color: var(--text3); text-transform: uppercase;
+  margin-bottom: 14px; margin-top: 28px;
+}
+
+/* ── BUTTON ── */
+.btn {
+  padding: 8px 18px; border-radius: 6px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; font-weight: 500;
+  cursor: pointer; transition: all 0.2s;
+  border: 1px solid var(--border);
+  background: transparent; color: var(--text2);
+}
+.btn:hover { background: var(--surface2); color: var(--text); }
+.btn-primary {
+  background: var(--accent); color: #0a0a0f;
+  border-color: var(--accent);
+}
+.btn-primary:hover { opacity: 0.85; background: var(--accent); color: #0a0a0f; }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.view.active .card,
+.view.active .domain-block,
+.view.active .stat-tile {
+  animation: fadeUp 0.4s ease both;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .g3 { grid-template-columns: 1fr 1fr; }
+  .template-grid { grid-template-columns: 1fr 1fr; }
+  .g4 { grid-template-columns: 1fr 1fr; }
+  .g1-2, .g2-1 { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .g2, .g3, .g4, .template-grid { grid-template-columns: 1fr; }
+  nav { padding: 0 12px; }
+  .view { padding: 16px 14px 60px; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">PM OS ⬡</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showView('dashboard')">Dashboard</button>
+    <button class="nav-tab" onclick="showView('evaluation')">Evaluation</button>
+    <button class="nav-tab" onclick="showView('flowmap')">Flow Map</button>
+    <button class="nav-tab" onclick="showView('initiatives')">Initiatives</button>
+    <button class="nav-tab" onclick="showView('templates')">Templates</button>
+    <button class="nav-tab" onclick="showView('correlations')">Correlations</button>
+  </div>
+  <div class="nav-right">
+    <span class="mode-badge" id="modeBadge" onclick="showView('evaluation')">⬡ GROWTH MODE</span>
+    <button class="save-btn" onclick="exportData()">↓ Export</button>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════════════════
+  VIEW 1: DASHBOARD
+════════════════════════════════════════════ -->
+<div class="view active" id="view-dashboard">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Strategy <span>Operating System</span></div>
+      <div class="page-sub">PM · CEO · Growth · Research · Evaluation · Initiatives</div>
+    </div>
+    <button class="btn btn-primary" onclick="recalcAll()">↻ Recalculate All</button>
+  </div>
+
+  <!-- KPI Stats -->
+  <div class="grid g4" id="statTiles" style="margin-bottom: 16px;">
+    <div class="stat-tile">
+      <div class="stat-num" id="overallScore" style="color:var(--accent)">—</div>
+      <div class="stat-label">OVERALL SCORE / 10</div>
+      <div class="stat-delta up" id="overallRag">—</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-num" id="greenCount" style="color:var(--green)">—</div>
+      <div class="stat-label">GREEN SKILLS</div>
+      <div class="stat-delta" style="color:var(--text2)" id="totalSkills">of — skills</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-num" id="redCount" style="color:var(--red)">—</div>
+      <div class="stat-label">RED / CRITICAL GAPS</div>
+      <div class="stat-delta" id="redLabel" style="color:var(--text2)">needs attention</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-num" id="modeScoreDisplay" style="color:var(--accent3)">—</div>
+      <div class="stat-label">MODE-WEIGHTED SCORE</div>
+      <div class="stat-delta" style="color:var(--text2)" id="modeLabel">GROWTH</div>
+    </div>
+  </div>
+
+  <!-- Domain Overview -->
+  <div class="section-label">Skill Domains</div>
+  <div class="grid g3" id="domainOverview"></div>
+
+  <!-- Weak spots -->
+  <div class="section-label">Focus Areas (Lowest Scores)</div>
+  <div class="card" id="focusAreas">
+    <div class="card-title"><span class="dot" style="background:var(--red)"></span>Priority Gaps</div>
+    <div id="focusList" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+  VIEW 2: EVALUATION
+════════════════════════════════════════════ -->
+<div class="view" id="view-evaluation">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Skill <span>Evaluation</span></div>
+      <div class="page-sub">Score each skill · Set weights · Switch modes</div>
+    </div>
+  </div>
+
+  <!-- Mode & Industry -->
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-title"><span class="dot" style="background:var(--accent)"></span>Evaluation Mode</div>
+    <div class="mode-pills" id="modePills">
+      <button class="mode-pill active" data-mode="growth" onclick="setMode('growth',this)">📈 Growth</button>
+      <button class="mode-pill" data-mode="strategy" onclick="setMode('strategy',this)">🎯 Strategy</button>
+      <button class="mode-pill" data-mode="research" onclick="setMode('research',this)">🔬 Research</button>
+      <button class="mode-pill" data-mode="pricing" onclick="setMode('pricing',this)">💰 Pricing / Monetization</button>
+      <button class="mode-pill" data-mode="hiring" onclick="setMode('hiring',this)">👥 Hiring / Team</button>
+      <button class="mode-pill" data-mode="launch" onclick="setMode('launch',this)">🚀 Product Launch</button>
+      <button class="mode-pill" data-mode="pivot" onclick="setMode('pivot',this)">🔄 Business Pivot</button>
+      <button class="mode-pill" data-mode="custom" onclick="setMode('custom',this)">⚙️ Custom</button>
+    </div>
+    <div class="section-label" style="margin-top:0">Industry Context</div>
+    <div class="industry-pills" id="industryPills">
+      <button class="ind-pill active" onclick="setIndustry('ecomm',this)">E-Commerce / Retail</button>
+      <button class="ind-pill" onclick="setIndustry('fashion',this)">Fashion / Styling</button>
+      <button class="ind-pill" onclick="setIndustry('saas',this)">SaaS / Tech</button>
+      <button class="ind-pill" onclick="setIndustry('health',this)">Health / Wellness</button>
+      <button class="ind-pill" onclick="setIndustry('finance',this)">Finance / FinTech</button>
+      <button class="ind-pill" onclick="setIndustry('marketplace',this)">Marketplace</button>
+      <button class="ind-pill" onclick="setIndustry('other',this)">Other / Custom</button>
+    </div>
+    <div id="modeDescription" style="color:var(--text2); font-size:11px; padding:10px 12px; background:var(--surface2); border-radius:6px; border-left:3px solid var(--accent);">
+      Growth mode: weights amplified for conversion, campaign analysis, pricing, and data-driven decision making.
+    </div>
+  </div>
+
+  <!-- Domain Evaluations -->
+  <div id="evaluationDomains"></div>
+</div>
+
+<!-- ════════════════════════════════════════════
+  VIEW 3: FLOW MAP
+════════════════════════════════════════════ -->
+<div class="view" id="view-flowmap">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Skill <span>Flow Map</span></div>
+      <div class="page-sub">Visual connections between skills, metrics, and business outcomes</div>
+    </div>
+  </div>
+
+  <div id="flow-canvas">
+    <svg class="flow-svg" id="flowSvg"></svg>
+    <!-- Nodes injected by JS -->
+  </div>
+  <div style="margin-top:12px; color:var(--text2); font-size:10px; text-align:center;">
+    Click nodes to see skill details · Lines show influence connections · Thickness = correlation strength
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+  VIEW 4: INITIATIVES
+════════════════════════════════════════════ -->
+<div class="view" id="view-initiatives">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Initiative <span>Prioritizer</span></div>
+      <div class="page-sub">What to build · Where to focus · What to sell · Effort vs Impact</div>
+    </div>
+    <button class="btn" onclick="addInitiative()">+ Add Initiative</button>
+  </div>
+
+  <div class="grid g4" style="margin-bottom:20px;">
+    <div class="stat-tile">
+      <div class="stat-num" style="color:var(--green)" id="initHigh">0</div>
+      <div class="stat-label">HIGH PRIORITY</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-num" style="color:var(--accent3)">—</div>
+      <div class="stat-label">AVG IMPACT SCORE</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-num" style="color:var(--accent2)" id="initTotal">0</div>
+      <div class="stat-label">TOTAL INITIATIVES</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-num" style="color:var(--accent4)">Q1</div>
+      <div class="stat-label">FOCUS QUARTER</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-title"><span class="dot" style="background:var(--accent2)"></span>Effort × Impact Matrix</div>
+    <div class="initiative-grid">
+      <div class="quadrant q1">
+        <div class="q-label" style="color:var(--green)">⬡ Do Now — High Impact, Low Effort</div>
+        <div id="q1Items"></div>
+      </div>
+      <div class="quadrant q2">
+        <div class="q-label" style="color:var(--accent3)">⬡ Plan — High Impact, High Effort</div>
+        <div id="q2Items"></div>
+      </div>
+      <div class="quadrant q3">
+        <div class="q-label" style="color:var(--amber)">⬡ Quick Wins — Low Impact, Low Effort</div>
+        <div id="q3Items"></div>
+      </div>
+      <div class="quadrant q4">
+        <div class="q-label" style="color:var(--red)">⬡ Deprioritize — Low Impact, High Effort</div>
+        <div id="q4Items"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:var(--accent4)"></span>All Initiatives</div>
+    <table class="corr-table" style="width:100%">
+      <thead>
+        <tr>
+          <th>Initiative</th>
+          <th>Type</th>
+          <th>Impact (1-10)</th>
+          <th>Effort (1-10)</th>
+          <th>Skills Needed</th>
+          <th>Priority</th>
+        </tr>
+      </thead>
+      <tbody id="initTableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+  VIEW 5: TEMPLATES
+════════════════════════════════════════════ -->
+<div class="view" id="view-templates">
+  <div class="page-header">
+    <div>
+      <div class="page-title">One-Page <span>Templates</span></div>
+      <div class="page-sub">Workflow templates for each skill domain</div>
+    </div>
+  </div>
+  <div class="template-grid" id="templateGrid"></div>
+</div>
+
+<!-- ════════════════════════════════════════════
+  VIEW 6: CORRELATIONS
+════════════════════════════════════════════ -->
+<div class="view" id="view-correlations">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Metric <span>Correlations</span></div>
+      <div class="page-sub">How skills and metrics influence each other · Including cross-metric effects like Conversion ↔ AOV</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-title"><span class="dot" style="background:var(--accent3)"></span>Key Insight: Non-Obvious Correlations</div>
+    <div style="color:var(--text2); font-size:12px; line-height:1.8; padding:4px 0;">
+      This view captures how metrics that appear unrelated can create <strong style="color:var(--text)">significant indirect effects</strong>. 
+      Example: Improving <span style="color:var(--accent)">Conversion Rate</span> by lowering traffic quality can 
+      <span style="color:var(--red)">decrease AOV</span> substantially — both metrics move, but in opposite directions.
+      Use this map before making isolated optimizations.
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-bottom:16px;">
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:var(--accent)"></span>Skill → Metric Correlations</div>
+      <table class="corr-table">
+        <thead>
+          <tr><th>Skill</th><th>Primary Metric</th><th>Secondary Effect</th><th>Strength</th></tr>
+        </thead>
+        <tbody id="skillMetricCorr"></tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:var(--accent2)"></span>Metric ↔ Metric Influence</div>
+      <table class="corr-table">
+        <thead>
+          <tr><th>Metric A</th><th>↔</th><th>Metric B</th><th>Direction</th><th>Watch For</th></tr>
+        </thead>
+        <tbody id="metricMetricCorr"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:var(--accent4)"></span>Business Scenario Correlation Alerts</div>
+    <div id="corrAlerts" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:4px;"></div>
+  </div>
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+// ══════════════════════════════════════════════
+// DATA MODEL
+// ══════════════════════════════════════════════
+
+const SKILL_DATA = [
+  {
+    id: 'pm-core', name: 'PM Core', color: '#e8ff47',
+    skills: [
+      { id: 'strategy', name: 'Strategic Thinking & Roadmapping', desc: 'Vision, prioritization, OKRs, roadmaps' },
+      { id: 'user-research', name: 'User Research & Empathy', desc: 'Interviews, personas, journey maps' },
+      { id: 'data', name: 'Data Analysis & Metrics', desc: 'KPIs, A/B testing, analytics interpretation' },
+      { id: 'writing', name: 'Writing & Communication', desc: 'PRDs, briefs, stakeholder updates' },
+      { id: 'collab', name: 'Cross-functional Collaboration', desc: 'Eng, design, GTM alignment' },
+      { id: 'problem', name: 'Problem Structuring', desc: 'Ambiguity → structured hypotheses' },
+    ]
+  },
+  {
+    id: 'research', name: 'Research Skills', color: '#47c4ff',
+    skills: [
+      { id: 'competitive', name: 'Competitive Analysis', desc: 'Competitor mapping, gap analysis, benchmarking' },
+      { id: 'ux-research', name: 'UX / UI Research', desc: 'Usability tests, heatmaps, design sprints' },
+      { id: 'market', name: 'Market Research', desc: 'TAM/SAM, trend analysis, customer segmentation' },
+      { id: 'campaign', name: 'Campaign Analysis', desc: 'Channel attribution, ROAS, funnel analysis' },
+    ]
+  },
+  {
+    id: 'pricing', name: 'Pricing Strategy', color: '#ff6b35',
+    skills: [
+      { id: 'pricing-models', name: 'Pricing Models', desc: 'Value-based, cost-plus, freemium, subscription' },
+      { id: 'pricing-test', name: 'Price Testing & Elasticity', desc: 'A/B tests, willingness-to-pay research' },
+      { id: 'monetization', name: 'Monetization Strategy', desc: 'New revenue streams, upsell, cross-sell' },
+      { id: 'pivot-pricing', name: 'Model Pivoting', desc: 'Shifting fee structures, new service tiers' },
+    ]
+  },
+  {
+    id: 'data-decision', name: 'Data-Based Decision Making', color: '#c47aff',
+    skills: [
+      { id: 'metrics-design', name: 'Metrics Design', desc: 'North Star, guardrail metrics, leading indicators' },
+      { id: 'experimentation', name: 'Experimentation', desc: 'Hypothesis design, statistical significance, multi-variate' },
+      { id: 'dashboards', name: 'Dashboards & Reporting', desc: 'BI tools, exec reporting, cohort analysis' },
+      { id: 'aov-conv', name: 'Cross-Metric Fluency', desc: 'Conversion↔AOV, LTV↔CAC, traffic↔quality tradeoffs' },
+    ]
+  },
+  {
+    id: 'growth', name: 'Growth & Campaigns', color: '#44dd88',
+    skills: [
+      { id: 'growth-loops', name: 'Growth Loops & Funnels', desc: 'Acquisition, activation, retention, referral' },
+      { id: 'campaign-mgmt', name: 'Campaign Management', desc: 'Paid, organic, influencer, email orchestration' },
+      { id: 'conversion', name: 'Conversion Optimization', desc: 'CRO, landing pages, checkout flows' },
+      { id: 'aov', name: 'AOV & Revenue Optimization', desc: 'Basket size, upsell, bundle strategy' },
+    ]
+  }
+];
+
+const MODE_WEIGHTS = {
+  growth: { 'pm-core':0.15, 'research':0.15, 'pricing':0.15, 'data-decision':0.25, 'growth':0.30 },
+  strategy: { 'pm-core':0.35, 'research':0.25, 'pricing':0.15, 'data-decision':0.15, 'growth':0.10 },
+  research: { 'pm-core':0.15, 'research':0.45, 'pricing':0.10, 'data-decision':0.20, 'growth':0.10 },
+  pricing: { 'pm-core':0.15, 'research':0.20, 'pricing':0.35, 'data-decision':0.20, 'growth':0.10 },
+  hiring: { 'pm-core':0.40, 'research':0.20, 'pricing':0.10, 'data-decision':0.20, 'growth':0.10 },
+  launch: { 'pm-core':0.25, 'research':0.20, 'pricing':0.20, 'data-decision':0.15, 'growth':0.20 },
+  pivot: { 'pm-core':0.20, 'research':0.20, 'pricing':0.30, 'data-decision':0.20, 'growth':0.10 },
+  custom: { 'pm-core':0.20, 'research':0.20, 'pricing':0.20, 'data-decision':0.20, 'growth':0.20 },
+};
+
+const MODE_DESC = {
+  growth: 'Growth mode: weights amplified for conversion, campaign analysis, pricing, and data-driven decision making.',
+  strategy: 'Strategy mode: emphasizes PM core skills, roadmapping, and research depth.',
+  research: 'Research mode: heavy weighting on competitive analysis, UX/UI research, and market intelligence.',
+  pricing: 'Pricing / Monetization mode: focused on pricing models, elasticity testing, and revenue model pivots.',
+  hiring: 'Hiring mode: evaluates against broad PM competency baseline — all core skills weighted heavily.',
+  launch: 'Product Launch mode: balances GTM, pricing, research, and communication skills.',
+  pivot: 'Business Pivot mode: stress-tests ability to reframe pricing, strategy, and market fit from scratch.',
+  custom: 'Custom mode: equal weights across all domains — adjust domain weights manually below.',
+};
+
+// State
+let scores = {};
+let currentMode = 'growth';
+let currentIndustry = 'ecomm';
+
+// Init scores
+SKILL_DATA.forEach(d => d.skills.forEach(s => { scores[s.id] = 5; }));
+
+// ══════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════
+function getRag(score) {
+  if (score >= 7.5) return 'G';
+  if (score >= 5) return 'A';
+  return 'R';
+}
+function getRagColor(rag) {
+  if (rag === 'G') return 'var(--green)';
+  if (rag === 'A') return 'var(--amber)';
+  return 'var(--red)';
+}
+function getDomainAvg(domain) {
+  const vals = domain.skills.map(s => scores[s.id]);
+  return vals.reduce((a,b) => a+b,0) / vals.length;
+}
+
+// ══════════════════════════════════════════════
+// EVALUATION VIEW
+// ══════════════════════════════════════════════
+function buildEvaluation() {
+  const container = document.getElementById('evaluationDomains');
+  container.innerHTML = '';
+  SKILL_DATA.forEach(domain => {
+    const block = document.createElement('div');
+    block.className = 'domain-block';
+    block.style.marginBottom = '12px';
+    block.style.borderColor = domain.color + '40';
+    block.innerHTML = `
+      <div class="domain-header" onclick="toggleDomain('${domain.id}')">
+        <div class="domain-name" style="color:${domain.color}">${domain.name}</div>
+        <div class="domain-score-bar">
+          <div style="font-size:9px;color:var(--text2);margin-right:4px;">Weight: 
+            <input type="number" min="0" max="100" step="1" 
+              value="${Math.round(MODE_WEIGHTS[currentMode][domain.id]*100)}"
+              style="width:40px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:'DM Mono',monospace;font-size:11px;padding:2px 5px;"
+              id="weight_${domain.id}" onchange="updateModeWeight('${domain.id}',this.value)" onclick="event.stopPropagation()">%
+          </div>
+          <div class="bar-track"><div class="bar-fill" id="bar_${domain.id}" style="background:${domain.color}"></div></div>
+          <div class="score-chip" id="domScore_${domain.id}" style="color:${domain.color}">—</div>
+          <div class="rag-dot" id="domRag_${domain.id}"></div>
+        </div>
+      </div>
+      <div class="domain-body" id="body_${domain.id}">
+        ${domain.skills.map(skill => `
+          <div class="skill-row">
+            <div class="skill-name">
+              <strong>${skill.name}</strong>${skill.desc}
+            </div>
+            <div class="skill-controls">
+              <input type="range" min="1" max="10" step="1" value="${scores[skill.id]}"
+                id="range_${skill.id}" onchange="setScore('${skill.id}',this.value)"
+                oninput="setScore('${skill.id}',this.value)">
+              <div class="score-display" id="score_${skill.id}" style="color:${domain.color}">${scores[skill.id]}</div>
+              <div class="rag-badge rag-${getRag(scores[skill.id])}" id="rag_${skill.id}">${getRag(scores[skill.id])}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    container.appendChild(block);
+  });
+  updateAllDomainBars();
+}
+
+function toggleDomain(id) {
+  const body = document.getElementById('body_'+id);
+  body.style.display = body.style.display === 'none' ? '' : 'none';
+}
+
+function setScore(skillId, val) {
+  scores[skillId] = parseFloat(val);
+  const el = document.getElementById('score_'+skillId);
+  const ragEl = document.getElementById('rag_'+skillId);
+  if (el) el.textContent = val;
+  if (ragEl) { ragEl.textContent = getRag(val); ragEl.className = 'rag-badge rag-'+getRag(val); }
+  updateAllDomainBars();
+  updateDashboard();
+}
+
+function updateAllDomainBars() {
+  SKILL_DATA.forEach(domain => {
+    const avg = getDomainAvg(domain);
+    const bar = document.getElementById('bar_'+domain.id);
+    const sc = document.getElementById('domScore_'+domain.id);
+    const rd = document.getElementById('domRag_'+domain.id);
+    if (bar) bar.style.width = (avg/10*100)+'%';
+    if (sc) sc.textContent = avg.toFixed(1);
+    if (rd) { rd.style.background = getRagColor(getRag(avg)); }
+  });
+}
+
+function updateModeWeight(domainId, val) {
+  MODE_WEIGHTS[currentMode][domainId] = parseFloat(val)/100;
+  updateDashboard();
+}
+
+// ══════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════
+function buildDomainOverview() {
+  const container = document.getElementById('domainOverview');
+  container.innerHTML = '';
+  SKILL_DATA.forEach((domain, i) => {
+    const avg = getDomainAvg(domain);
+    const rag = getRag(avg);
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.style.borderColor = domain.color+'30';
+    div.style.animationDelay = (i*0.07)+'s';
+    div.innerHTML = `
+      <div class="card-title"><span class="dot" style="background:${domain.color}"></span>${domain.name.toUpperCase()}</div>
+      <div style="font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:${domain.color};letter-spacing:-2px;">${avg.toFixed(1)}</div>
+      <div style="margin:8px 0;">
+        <div class="bar-track" style="width:100%;height:6px;border-radius:3px;">
+          <div class="bar-fill" style="background:${domain.color};width:${avg/10*100}%"></div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="color:var(--text2);font-size:10px;">${domain.skills.length} skills</span>
+        <span class="rag-badge rag-${rag}">${rag === 'G' ? '● Green' : rag === 'A' ? '● Amber' : '● Red'}</span>
+      </div>
+    `;
+    div.onclick = () => { showView('evaluation'); };
+    container.appendChild(div);
+  });
+}
+
+function updateDashboard() {
+  // Overall
+  const allScores = Object.values(scores);
+  const overall = allScores.reduce((a,b)=>a+b,0)/allScores.length;
+  document.getElementById('overallScore').textContent = overall.toFixed(1);
+  const rag = getRag(overall);
+  const ragEl = document.getElementById('overallRag');
+  ragEl.textContent = rag === 'G' ? '● Green — On Track' : rag === 'A' ? '● Amber — Developing' : '● Red — Critical';
+  ragEl.className = 'stat-delta ' + (rag==='G'?'up':rag==='A'?'':' down');
+  ragEl.style.color = getRagColor(rag);
+
+  // Green / Red counts
+  const greens = allScores.filter(s => getRag(s) === 'G').length;
+  const reds = allScores.filter(s => getRag(s) === 'R').length;
+  document.getElementById('greenCount').textContent = greens;
+  document.getElementById('redCount').textContent = reds;
+  document.getElementById('totalSkills').textContent = 'of '+allScores.length+' skills';
+
+  // Mode weighted
+  let modeScore = 0;
+  SKILL_DATA.forEach(domain => {
+    const w = MODE_WEIGHTS[currentMode][domain.id] || 0;
+    modeScore += getDomainAvg(domain) * w;
+  });
+  document.getElementById('modeScoreDisplay').textContent = modeScore.toFixed(1);
+  document.getElementById('modeLabel').textContent = currentMode.toUpperCase();
+
+  // Domain overview
+  buildDomainOverview();
+
+  // Focus areas
+  const sorted = SKILL_DATA.flatMap(d => d.skills.map(s => ({...s, score: scores[s.id], domain: d})))
+    .sort((a,b) => a.score - b.score).slice(0,6);
+  const focusList = document.getElementById('focusList');
+  focusList.innerHTML = sorted.map(s =>
+    `<span class="initiative-chip" style="border-color:${getRagColor(getRag(s.score))}40;color:${getRagColor(getRag(s.score))}">
+      <span class="rag-dot" style="background:${getRagColor(getRag(s.score))}"></span>
+      ${s.name} <strong>${s.score}/10</strong>
+    </span>`
+  ).join('');
+
+  updateAllDomainBars();
+}
+
+// ══════════════════════════════════════════════
+// MODE & INDUSTRY
+// ══════════════════════════════════════════════
+function setMode(mode, el) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('modeBadge').textContent = '⬡ '+mode.toUpperCase()+' MODE';
+  document.getElementById('modeDescription').textContent = MODE_DESC[mode];
+  // Update weight inputs
+  SKILL_DATA.forEach(d => {
+    const inp = document.getElementById('weight_'+d.id);
+    if (inp) inp.value = Math.round(MODE_WEIGHTS[mode][d.id]*100);
+  });
+  updateDashboard();
+}
+
+function setIndustry(ind, el) {
+  currentIndustry = ind;
+  document.querySelectorAll('.ind-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ══════════════════════════════════════════════
+// FLOW MAP
+// ══════════════════════════════════════════════
+const FLOW_NODES = [
+  { id:'center', label:'Strategy OS', sub:'Master Score', x:42, y:42, center:true },
+  { id:'pm-core', label:'PM Core', sub:'Foundation', x:15, y:15 },
+  { id:'research', label:'Research', sub:'Intelligence', x:68, y:12 },
+  { id:'pricing', label:'Pricing', sub:'Monetization', x:80, y:42 },
+  { id:'data-dec', label:'Data Decisions', sub:'Evidence', x:68, y:72 },
+  { id:'growth', label:'Growth', sub:'Scale', x:15, y:72 },
+  { id:'conv', label:'Conversion', sub:'CVR metric', x:38, y:78 },
+  { id:'aov', label:'AOV', sub:'Revenue / order', x:55, y:78 },
+  { id:'traffic', label:'Traffic', sub:'Acquisition', x:20, y:50 },
+  { id:'campaign', label:'Campaigns', sub:'Execution', x:70, y:30 },
+];
+
+const FLOW_EDGES = [
+  { from:'pm-core', to:'center', w:3 },
+  { from:'research', to:'center', w:2.5 },
+  { from:'pricing', to:'center', w:2 },
+  { from:'data-dec', to:'center', w:3 },
+  { from:'growth', to:'center', w:2.5 },
+  { from:'traffic', to:'conv', w:2, dash:true },
+  { from:'conv', to:'aov', w:2.5, inverse:true },
+  { from:'campaign', to:'conv', w:1.5 },
+  { from:'pricing', to:'aov', w:2 },
+  { from:'research', to:'campaign', w:1.5 },
+  { from:'growth', to:'conv', w:2 },
+  { from:'data-dec', to:'aov', w:1.5 },
+];
+
+function buildFlowMap() {
+  const canvas = document.getElementById('flow-canvas');
+  const svg = document.getElementById('flowSvg');
+  const W = canvas.offsetWidth;
+  const H = canvas.offsetHeight;
+
+  // Clear nodes (not svg)
+  canvas.querySelectorAll('.flow-node').forEach(n => n.remove());
+  svg.innerHTML = '';
+
+  // Place nodes
+  FLOW_NODES.forEach(node => {
+    const div = document.createElement('div');
+    div.className = 'flow-node' + (node.center ? ' center-node' : '');
+    div.id = 'fnode_'+node.id;
+    div.innerHTML = `
+      <div class="fn-title">${node.label}</div>
+      <div class="fn-sub">${node.sub}</div>
+      ${node.center ? `<div class="fn-score">${Object.values(scores).reduce((a,b)=>a+b,0)/Object.values(scores).length|0}/10</div>` : ''}
+    `;
+    div.style.left = (node.x/100*W - 65) + 'px';
+    div.style.top = (node.y/100*H - 35) + 'px';
+    canvas.appendChild(div);
+  });
+
+  // Draw edges
+  FLOW_EDGES.forEach(edge => {
+    const fromNode = FLOW_NODES.find(n => n.id === edge.from);
+    const toNode = FLOW_NODES.find(n => n.id === edge.to);
+    if (!fromNode || !toNode) return;
+    const x1 = fromNode.x/100*W;
+    const y1 = fromNode.y/100*H;
+    const x2 = toNode.x/100*W;
+    const y2 = toNode.y/100*H;
+    const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+    line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+    line.setAttribute('stroke', edge.inverse ? '#ff4444' : 'rgba(232,255,71,0.3)');
+    line.setAttribute('stroke-width', edge.w || 1);
+    if (edge.dash) line.setAttribute('stroke-dasharray', '5,5');
+    svg.appendChild(line);
+
+    // Arrowhead
+    const angle = Math.atan2(y2-y1, x2-x1);
+    const ax = x2 - 14*Math.cos(angle);
+    const ay = y2 - 14*Math.sin(angle);
+    const poly = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+    const size = 5;
+    const pts = [
+      [x2, y2],
+      [ax - size*Math.sin(angle), ay + size*Math.cos(angle)],
+      [ax + size*Math.sin(angle), ay - size*Math.cos(angle)]
+    ].map(p => p.join(',')).join(' ');
+    poly.setAttribute('points', pts);
+    poly.setAttribute('fill', edge.inverse ? '#ff4444' : 'rgba(232,255,71,0.5)');
+    svg.appendChild(poly);
+  });
+}
+
+// ══════════════════════════════════════════════
+// INITIATIVES
+// ══════════════════════════════════════════════
+const DEFAULT_INITIATIVES = [
+  { name:'Improve Checkout Flow', type:'Product', impact:8, effort:3, skills:['conversion','ux-research'] },
+  { name:'Launch Styling Fee Pilot', type:'Pricing', impact:7, effort:6, skills:['pricing-models','pivot-pricing'] },
+  { name:'Competitor Deep-Dive', type:'Research', impact:6, effort:2, skills:['competitive','market'] },
+  { name:'AOV Upsell Engine', type:'Growth', impact:9, effort:7, skills:['aov','aov-conv'] },
+  { name:'New Product Category (e.g. Earbuds)', type:'Strategy', impact:7, effort:9, skills:['strategy','market','pricing-models'] },
+  { name:'A/B Test Pricing Page', type:'Pricing', impact:6, effort:3, skills:['pricing-test','experimentation'] },
+  { name:'Campaign Attribution Overhaul', type:'Data', impact:8, effort:6, skills:['campaign','dashboards'] },
+  { name:'Traffic Quality Audit', type:'Data', impact:7, effort:4, skills:['aov-conv','market'] },
+];
+
+let initiatives = [...DEFAULT_INITIATIVES];
+
+function buildInitiatives() {
+  ['q1','q2','q3','q4'].forEach(q => document.getElementById(q+'Items').innerHTML = '');
+  const tbody = document.getElementById('initTableBody');
+  tbody.innerHTML = '';
+  let highCount = 0;
+
+  initiatives.forEach((init, i) => {
+    const highImpact = init.impact >= 6;
+    const highEffort = init.effort >= 6;
+    const quad = highImpact && !highEffort ? 'q1' : highImpact && highEffort ? 'q2' : !highImpact && !highEffort ? 'q3' : 'q4';
+    const priority = quad === 'q1' ? '🟢 Now' : quad === 'q2' ? '🔵 Plan' : quad === 'q3' ? '🟡 Maybe' : '🔴 Deprioritize';
+    if (quad === 'q1') highCount++;
+    const color = quad === 'q1' ? 'var(--green)' : quad === 'q2' ? 'var(--accent3)' : quad === 'q3' ? 'var(--amber)' : 'var(--red)';
+    document.getElementById(quad+'Items').innerHTML +=
+      `<span class="initiative-chip" style="border-color:${color}40;color:${color}">${init.name}</span>`;
+    tbody.innerHTML += `
+      <tr>
+        <td style="color:var(--text)">${init.name}</td>
+        <td style="color:var(--text2)">${init.type}</td>
+        <td>
+          <input type="range" min="1" max="10" value="${init.impact}" style="width:70px;"
+            oninput="updateInitiative(${i},'impact',this.value);document.getElementById('iimpact${i}').textContent=this.value">
+          <span id="iimpact${i}">${init.impact}</span>
+        </td>
+        <td>
+          <input type="range" min="1" max="10" value="${init.effort}" style="width:70px;"
+            oninput="updateInitiative(${i},'effort',this.value);document.getElementById('ieffort${i}').textContent=this.value">
+          <span id="ieffort${i}">${init.effort}</span>
+        </td>
+        <td style="color:var(--text2);font-size:10px">${init.skills.join(', ')}</td>
+        <td>${priority}</td>
+      </tr>`;
+  });
+  document.getElementById('initHigh').textContent = highCount;
+  document.getElementById('initTotal').textContent = initiatives.length;
+}
+
+function updateInitiative(i, key, val) {
+  initiatives[i][key] = parseInt(val);
+  buildInitiatives();
+}
+
+function addInitiative() {
+  const name = prompt('Initiative name:');
+  if (!name) return;
+  initiatives.push({ name, type:'Custom', impact:5, effort:5, skills:[] });
+  buildInitiatives();
+}
+
+// ══════════════════════════════════════════════
+// TEMPLATES
+// ══════════════════════════════════════════════
+const TEMPLATES = [
+  {
+    icon:'🎯', title:'Strategic Roadmapping', color:'#e8ff47',
+    steps:[
+      { title:'Define North Star', body:'Set 1 primary metric that represents product success. Link to company OKRs.' },
+      { title:'Horizon Mapping', body:'Break roadmap into Now / Next / Later. Validate each with user or data evidence.' },
+      { title:'Prioritize with RICE', body:'Reach × Impact × Confidence ÷ Effort. Score top 10 features.' },
+      { title:'Stakeholder Alignment', body:'Run roadmap review. Document trade-off decisions with rationale.' },
+    ]
+  },
+  {
+    icon:'🔬', title:'Competitive Analysis', color:'#47c4ff',
+    steps:[
+      { title:'Define Competitive Set', body:'Direct, indirect, and adjacent competitors. Use Jobs-to-be-Done lens.' },
+      { title:'Feature & UX Audit', body:'Score each competitor on 10 dimensions. Use Figma to map UI patterns.' },
+      { title:'Gap & Opportunity Matrix', body:'Find what competitors do poorly. Map to your strengths.' },
+      { title:'Strategic Response', body:'Where to match, leapfrog, or ignore. Update roadmap accordingly.' },
+    ]
+  },
+  {
+    icon:'🖼', title:'UX / UI Research', color:'#c47aff',
+    steps:[
+      { title:'Research Question', body:'Define 1 clear question. E.g. "Why do users drop off at checkout?"' },
+      { title:'Method Selection', body:'Moderated interviews (5 users) or unmoderated tests (20+). Heatmaps optional.' },
+      { title:'Synthesis', body:'Affinity map findings. Extract top 3 insight themes.' },
+      { title:'Design Recommendations', body:'Map insights to specific UI changes. Prioritize by impact.' },
+    ]
+  },
+  {
+    icon:'💰', title:'Pricing Strategy', color:'#ff6b35',
+    steps:[
+      { title:'Value Metric ID', body:'What does your customer pay for? Per user, per feature, per outcome?' },
+      { title:'Willingness-to-Pay Research', body:'Survey or Van Westendorp model. Find acceptable price range.' },
+      { title:'Competitive Pricing Scan', body:'Map competitor prices. Identify your price position intent.' },
+      { title:'Test & Iterate', body:'A/B test pricing pages. Measure conversion and churn impact.' },
+    ]
+  },
+  {
+    icon:'📊', title:'Campaign Analysis', color:'#44dd88',
+    steps:[
+      { title:'Attribution Model', body:'Define first-touch, last-touch, or multi-touch model. Document in BI tool.' },
+      { title:'Channel Performance', body:'ROAS, CPA, CTR per channel. Identify top 20% spend driving 80% return.' },
+      { title:'Funnel Drop-Off', body:'Map drop-off from impression → conversion. Find the biggest leak.' },
+      { title:'Optimization Sprint', body:'3-week sprint: pause bottom quartile, double top quartile, test one new channel.' },
+    ]
+  },
+  {
+    icon:'📈', title:'Data-Based Decisions', color:'#e8ff47',
+    steps:[
+      { title:'Define the Question', body:'State hypothesis clearly. "We believe X will increase Y by Z%."' },
+      { title:'Instrument & Measure', body:'Confirm tracking is in place. Verify data quality before analysis.' },
+      { title:'Experiment Design', body:'Set sample size, duration, success metric, and guardrail metric.' },
+      { title:'Decision Rule', body:'Define in advance: what result triggers action? Avoid p-hacking.' },
+    ]
+  },
+  {
+    icon:'🌍', title:'Market Research', color:'#47c4ff',
+    steps:[
+      { title:'Market Sizing', body:'Calculate TAM → SAM → SOM. Use bottoms-up where possible.' },
+      { title:'Customer Segmentation', body:'Cluster by needs, not demographics. Use real behavioral data.' },
+      { title:'Trend Mapping', body:'Track macro trends (5yr), industry trends (2yr), and signal trends (6mo).' },
+      { title:'Insight to Action', body:'Map each insight to a product, pricing, or go-to-market implication.' },
+    ]
+  },
+  {
+    icon:'↔️', title:'Conversion ↔ AOV Balance', color:'#ff4444',
+    steps:[
+      { title:'Baseline Both Metrics', body:'Track CVR and AOV simultaneously. Never optimize one in isolation.' },
+      { title:'Segment Analysis', body:'Break down by traffic source, device, product category. Find where they diverge.' },
+      { title:'Tradeoff Mapping', body:'If CVR ↑ and AOV ↓, calculate net revenue impact. Is it worth it?' },
+      { title:'Intervention Design', body:'Test bundle offers, minimum spend thresholds, or personalized recommendations.' },
+    ]
+  },
+  {
+    icon:'⭐', title:'Evaluation Scorecard', color:'#c47aff',
+    steps:[
+      { title:'Set Mode & Industry', body:'Choose Evaluation Mode (Growth/Strategy/Research etc.) and Industry context.' },
+      { title:'Score Each Skill', body:'Rate 1-10. Use RAG (Red/Amber/Green) for quick status. Be honest.' },
+      { title:'Adjust Weights', body:'Set domain weights % to match current business priority or KPI focus.' },
+      { title:'Read the Output', body:'Overall score, mode-weighted score, focus areas. Update monthly or per quarter.' },
+    ]
+  },
+];
+
+function buildTemplates() {
+  const grid = document.getElementById('templateGrid');
+  grid.innerHTML = '';
+  TEMPLATES.forEach((t,i) => {
+    const div = document.createElement('div');
+    div.className = 'template-card';
+    div.style.animationDelay = (i*0.06)+'s';
+    div.innerHTML = `
+      <div class="template-header">
+        <div class="template-icon" style="background:${t.color}20">${t.icon}</div>
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:13px;">${t.title}</div>
+          <div style="color:var(--text2);font-size:10px;">${t.steps.length} steps</div>
+        </div>
+        <div style="margin-left:auto;width:6px;height:6px;border-radius:50%;background:${t.color}"></div>
+      </div>
+      <div class="template-body">
+        ${t.steps.map((s,j) => `
+          <div class="template-step">
+            <div class="step-num" style="background:${t.color}20;color:${t.color}">${j+1}</div>
+            <div class="step-text"><strong>${s.title}</strong>${s.body}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    grid.appendChild(div);
+  });
+}
+
+// ══════════════════════════════════════════════
+// CORRELATIONS
+// ══════════════════════════════════════════════
+function buildCorrelations() {
+  const smRows = [
+    ['Competitive Analysis', 'Market Share', 'Pricing confidence ↑', 'Strong'],
+    ['Pricing Strategy', 'Revenue per User', 'Conversion Rate ↓ risk', 'Strong'],
+    ['Campaign Analysis', 'ROAS', 'AOV change (traffic quality)', 'Moderate'],
+    ['Conversion Optimization', 'CVR', 'AOV ↓ (volume vs value tradeoff)', 'Strong'],
+    ['Data-Based Decisions', 'All KPIs', 'Faster iteration velocity', 'Strong'],
+    ['UX Research', 'Drop-off Rate', 'Brand perception', 'Moderate'],
+    ['Market Research', 'Pricing confidence', 'Feature prioritization', 'Moderate'],
+  ];
+  document.getElementById('skillMetricCorr').innerHTML = smRows.map(r =>
+    `<tr><td style="color:var(--text)">${r[0]}</td><td style="color:var(--accent2)">${r[1]}</td>
+     <td style="color:var(--text2);font-size:10px">${r[2]}</td>
+     <td><span class="corr-chip ${r[3]==='Strong'?'corr-strong':'corr-moderate'}">${r[3]}</span></td></tr>`
+  ).join('');
+
+  const mmRows = [
+    ['Conversion Rate (CVR)', '↕', 'AOV', 'Often Inverse', 'Lowering traffic quality ↑ CVR but ↓ AOV'],
+    ['Traffic Volume', '↕', 'CVR', 'Often Inverse', 'Broad targeting lowers intent signals'],
+    ['CAC', '↕', 'LTV', 'Should be positive', 'If CAC ↑ but LTV flat → unsustainable'],
+    ['Pricing (↑)', '↕', 'Conversion Rate', 'Often Inverse', 'Price sensitivity varies by segment'],
+    ['AOV', '↕', 'Repeat Purchase Rate', 'Often Positive', 'Higher spenders tend to return more'],
+    ['Campaign ROAS', '↕', 'Organic Traffic', 'Moderate Positive', 'Paid halo effect on brand search'],
+  ];
+  document.getElementById('metricMetricCorr').innerHTML = mmRows.map(r =>
+    `<tr><td style="color:var(--accent)">${r[0]}</td><td style="color:var(--text2)">${r[1]}</td>
+     <td style="color:var(--accent3)">${r[2]}</td>
+     <td><span class="corr-chip ${r[3].includes('Inverse')?'corr-inverse':r[3].includes('Positive')?'corr-strong':'corr-moderate'}">${r[3]}</span></td>
+     <td style="color:var(--text2);font-size:10px">${r[4]}</td></tr>`
+  ).join('');
+
+  const alerts = [
+    { title:'CVR ↑ but Revenue Flat', desc:'You may be attracting lower AOV customers. Check segment breakdown before celebrating.', color:'var(--amber)' },
+    { title:'Styling Fee Introduction', desc:'Adding a fee to a free service creates perceived value shift. Model AOV and churn impact before launch.', color:'var(--red)' },
+    { title:'New Category Launch (e.g. Earbuds)', desc:'Adjacent product requires new competitive intel, pricing strategy, and separate campaign tracking to avoid cannibalizing core metrics.', color:'var(--accent3)' },
+    { title:'Traffic ↑, CVR ↓', desc:'Likely audience mismatch. Review campaign targeting before scaling spend.', color:'var(--red)' },
+    { title:'AOV ↑, Repeat Rate ↓', desc:'Higher price may reduce frequency. Investigate elasticity by segment.', color:'var(--amber)' },
+    { title:'CAC ↑ + LTV Flat', desc:'Unit economics deteriorating. Pause scaling and improve activation or retention first.', color:'var(--red)' },
+  ];
+  document.getElementById('corrAlerts').innerHTML = alerts.map(a => `
+    <div style="background:var(--surface2);border:1px solid ${a.color}30;border-left:3px solid ${a.color};border-radius:6px;padding:14px;">
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:11px;color:${a.color};margin-bottom:6px;">${a.title}</div>
+      <div style="font-size:10px;color:var(--text2);line-height:1.6;">${a.desc}</div>
+    </div>
+  `).join('');
+}
+
+// ══════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('view-'+id).classList.add('active');
+  const tabs = { dashboard:0, evaluation:1, flowmap:2, initiatives:3, templates:4, correlations:5 };
+  const tabEls = document.querySelectorAll('.nav-tab');
+  if (tabEls[tabs[id]]) tabEls[tabs[id]].classList.add('active');
+  if (id === 'flowmap') setTimeout(buildFlowMap, 50);
+  if (id === 'dashboard') updateDashboard();
+}
+
+// ══════════════════════════════════════════════
+// EXPORT
+// ══════════════════════════════════════════════
+function exportData() {
+  const data = {
+    mode: currentMode,
+    industry: currentIndustry,
+    scores,
+    weights: MODE_WEIGHTS[currentMode],
+    exported: new Date().toISOString()
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'pm-os-evaluation.json';
+  a.click();
+}
+
+function recalcAll() {
+  updateDashboard();
+  buildFlowMap();
+  buildInitiatives();
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+window.onload = function() {
+  buildEvaluation();
+  buildDomainOverview();
+  updateDashboard();
+  buildInitiatives();
+  buildTemplates();
+  buildCorrelations();
+};
+
+window.onresize = function() {
+  if (document.getElementById('view-flowmap').classList.contains('active')) buildFlowMap();
+};
+</script>
+</body>
+</html>
